@@ -1,0 +1,34 @@
+services:
+  openldap:
+    container_name: openldap
+    hostname: openldap.$DOMAIN
+    image: $OPENLDAP_IMAGE:$OPENLDAP_VERSION
+    restart: unless-stopped
+    volumes:
+      - $TOP/openldap:/bitnami/openldap
+    ports:
+      - 636:636
+      - 389:389
+    environment:
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=password
+      - LDAP_USERS=$LDAP_USERS
+      - LDAP_PASSWORDS=$LDAP_USERS
+      - LDAP_ROOT=dc=example,dc=com
+      - LDAP_USER_DC=users
+      - LDAP_GROUP=engineers
+      - LDAP_ADMIN_DN=cn=admin,dc=example,dc=com
+      - LDAP_PORT_NUMBER=389
+      - LDAP_ENABLE_TLS=yes
+      - LDAP_REQUIRE_TLS=no
+      - LDAP_LDAPS_PORT_NUMBER=636
+      - LDAP_TLS_KEY_FILE=/run/secrets/wildcard_privkey
+      - LDAP_TLS_CERT_FILE=/run/secrets/wildcard_cert
+      - LDAP_TLS_CA_FILE=/run/secrets/wildcard_ca_cert
+    secrets:
+      - wildcard_privkey
+      - wildcard_cert
+      - wildcard_ca_cert
+    networks:
+      vault-net:
+        ipv4_address: 172.20.0.100

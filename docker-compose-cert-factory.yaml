@@ -1,0 +1,11 @@
+services:
+  cert_factory:
+    container_name: cert_factory
+    image: $TERRAFORM_IMAGE:$TERRAFORM_VERSION
+    working_dir: /workspace
+    volumes:
+      - $TOP/certs:/workspace
+    restart: no
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "cd /workspace && chmod +x /workspace/tf.sh && /workspace/tf.sh"

@@ -1,0 +1,15 @@
+# services:
+  # whoami: # for testing traefik routing
+  #   container_name: whoami
+  #   hostname: whoami.$DOMAIN
+  #   image: traefik/whoami:latest
+  #   restart: unless-stopped
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.whoami.rule=Host(`whoami.$DOMAIN`)
+  #     - traefik.http.routers.whoami.entrypoints=websecure
+  #     - traefik.http.routers.whoami.tls=true
+  #     - traefik.http.routers.whoami.tls.certresolver=default
+  #   networks:
+  #     vault-net:
+  #       ipv4_address: 172.20.0.99

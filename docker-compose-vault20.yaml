@@ -1,0 +1,141 @@
+services:
+  vault21:
+    container_name: vault21
+    hostname: vault21.$DOMAIN
+    image: $VAULT_IMAGE:$VAULT_VERSION
+    restart: unless-stopped
+    ports:
+      - 8221:8200
+    volumes:
+      - $TOP/vault21/data:/vault/data
+      - $TOP/vault21/conf:/vault/conf
+      - $TOP/vault21/audit:/vault/audit
+      - $TOP/vault21/snapshots:/vault/snapshots
+      - $TOP/vault21/plugins:/vault/plugins
+    environment:
+      - VAULT_ADDR=https://vault21.$DOMAIN:8200
+      - VAULT_API_ADDR=https://vault20.$DOMAIN
+      - VAULT_CLUSTER_ADDR=https://vault21.$DOMAIN:8201
+      - VAULT_SKIP_VERIFY=true
+      - VAULT_DISABLE_MLOCK=true
+      - SKIP_SETCAP=true
+      - VAULT_UI=true
+      - VAULT_LICENSE_PATH=/run/secrets/vault_license
+    command: vault server -config=/vault/conf/vault.hcl
+    secrets:
+      - wildcard_privkey
+      - wildcard_cert
+      - wildcard_ca_cert
+      - wildcard_fullchain
+      - vault_license
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.vault21.loadbalancer.server.port=8200"
+      - "traefik.http.routers.vault21.rule=Host(`vault20.$DOMAIN`)"
+      - "traefik.http.services.vault21.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.vault21.entrypoints=websecure"
+      - "traefik.http.routers.vault21.tls=true"
+    networks:
+      vault-net:
+        ipv4_address: 172.20.0.21
+    extra_hosts:
+      - "vault10.$DOMAIN:172.20.0.10"
+      - "vault20.$DOMAIN:172.20.0.10"
+      - "vault30.$DOMAIN:172.20.0.10"
+      - "vault40.$DOMAIN:172.20.0.10"
+    depends_on:
+      - cert_factory
+
+  vault22:
+    container_name: vault22
+    hostname: vault22.$DOMAIN
+    image: $VAULT_IMAGE:$VAULT_VERSION
+    restart: unless-stopped
+    ports:
+      - 8222:8200
+    volumes:
+      - $TOP/vault22/data:/vault/data
+      - $TOP/vault22/conf:/vault/conf
+      - $TOP/vault22/audit:/vault/audit
+      - $TOP/vault22/snapshots:/vault/snapshots
+      - $TOP/vault22/plugins:/vault/plugins
+    environment:
+      - VAULT_ADDR=https://vault22.$DOMAIN:8200
+      - VAULT_API_ADDR=https://vault20.$DOMAIN
+      - VAULT_CLUSTER_ADDR=https://vault22.$DOMAIN:8201
+      - VAULT_SKIP_VERIFY=true
+      - VAULT_DISABLE_MLOCK=true
+      - SKIP_SETCAP=true
+      - VAULT_UI=true
+      - VAULT_LICENSE_PATH=/run/secrets/vault_license
+    command: vault server -config=/vault/conf/vault.hcl
+    secrets:
+      - wildcard_privkey
+      - wildcard_cert
+      - wildcard_ca_cert
+      - wildcard_fullchain
+      - vault_license
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.vault22.loadbalancer.server.port=8200"
+      - "traefik.http.routers.vault22.rule=Host(`vault20.$DOMAIN`)"
+      - "traefik.http.services.vault22.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.vault22.entrypoints=websecure"
+      - "traefik.http.routers.vault22.tls=true"
+    networks:
+      vault-net:
+        ipv4_address: 172.20.0.22
+    extra_hosts:
+      - "vault10.$DOMAIN:172.20.0.10"
+      - "vault20.$DOMAIN:172.20.0.10"
+      - "vault30.$DOMAIN:172.20.0.10"
+      - "vault40.$DOMAIN:172.20.0.10"
+    depends_on:
+      - cert_factory
+
+  vault23:
+    container_name: vault23
+    hostname: vault23.$DOMAIN
+    image: $VAULT_IMAGE:$VAULT_VERSION
+    restart: unless-stopped
+    ports:
+      - 8223:8200
+    volumes:
+      - $TOP/vault23/data:/vault/data
+      - $TOP/vault23/conf:/vault/conf
+      - $TOP/vault23/audit:/vault/audit
+      - $TOP/vault23/snapshots:/vault/snapshots
+      - $TOP/vault23/plugins:/vault/plugins
+    environment:
+      - VAULT_ADDR=https://vault23.$DOMAIN:8200
+      - VAULT_API_ADDR=https://vault20.$DOMAIN
+      - VAULT_CLUSTER_ADDR=https://vault23.$DOMAIN:8201
+      - VAULT_SKIP_VERIFY=true
+      - VAULT_DISABLE_MLOCK=true
+      - SKIP_SETCAP=true
+      - VAULT_UI=true
+      - VAULT_LICENSE_PATH=/run/secrets/vault_license
+    command: vault server -config=/vault/conf/vault.hcl
+    secrets:
+      - wildcard_privkey
+      - wildcard_cert
+      - wildcard_ca_cert
+      - wildcard_fullchain
+      - vault_license
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.vault23.loadbalancer.server.port=8200"
+      - "traefik.http.routers.vault23.rule=Host(`vault20.$DOMAIN`)"
+      - "traefik.http.services.vault23.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.vault23.entrypoints=websecure"
+      - "traefik.http.routers.vault23.tls=true"
+    networks:
+      vault-net:
+        ipv4_address: 172.20.0.23
+    extra_hosts:
+      - "vault10.$DOMAIN:172.20.0.10"
+      - "vault20.$DOMAIN:172.20.0.10"
+      - "vault30.$DOMAIN:172.20.0.10"
+      - "vault40.$DOMAIN:172.20.0.10"
+    depends_on:
+      - cert_factory

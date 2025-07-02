@@ -1,0 +1,60 @@
+services:
+  traefik:
+    container_name: traefik
+    hostname: traefik.$DOMAIN
+    image: $TRAEFIK_IMAGE:$TRAEFIK_VERSION
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $TOP/traefik/config:/config
+      - $TOP/traefik/log:/log
+    command:
+      # - --log.level=DEBUG
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --log.filepath=/log/traefik.log
+      - --accesslog=true
+      - --accesslog.filepath=/log/traefik-access.log
+      - --providers.docker.exposedByDefault=true
+      - --providers.file.directory=/config
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.asDefault=true
+      - --ping.terminatingStatusCode=204
+      - --serverstransport.insecureskipverify=true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=default
+    depends_on:
+      - cert_factory
+
+    healthcheck:
+      test: traefik healthcheck --ping
+      interval: 3s
+      timeout: 1s
+      start_period: 3s
+
+    secrets:
+      - wildcard_privkey
+      - wildcard_cert
+      - wildcard_ca_cert
+      - wildcard_fullchain
+      - vault_license
+
+    networks:
+      vault-net:
+        ipv4_address: 172.20.0.10
+    extra_hosts:
+      - "vault10.$DOMAIN:172.20.0.10"
+      - "vault20.$DOMAIN:172.20.0.10"
+      - "vault30.$DOMAIN:172.20.0.10"
